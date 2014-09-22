@@ -22,7 +22,8 @@ sub branch_parse() {
     }
 }
 
-# prints how many commits between current branch and origin/master
+# prints the general number of commits as difference between current branch and origin/master
+# TODO: show which branch is ahead (or they are diverged), additional status is needed
 sub pending() {
     my $count = shift;
     print colored ['black on_bright_red'], "[ pending changes: $count ]" if $count > 0;
