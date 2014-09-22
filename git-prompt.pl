@@ -28,7 +28,7 @@ sub pending() {
     print colored ['black on_bright_red'], "[ pending changes: $count ]" if $count > 0;
 }
 
-# executes keys and passes result to given sub for further parsin/output
+# executes keys and passes result to given sub for further parsing/output
 sub git_exec() {
     my $git_bin = "/usr/bin/git";
     my ($cmd, $subref, $newline) = @_;
