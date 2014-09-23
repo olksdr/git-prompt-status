@@ -11,12 +11,10 @@ your system the ``PS1`` variable should be set to include
 a ``git-prompt-status.pl``. For example:
 ```bash
 GIT_PROMPT="/path/to/git-prompt-status.pl"
-PS1="\h@[\w] \$($GIT_PROMPT)\n > "
+PS1="\h@[\w]\$($GIT_PROMPT)\n> "
 ```
-
-##### How it looks now:
+#####Result in the repo:
 ``` bash
-userhostname@[/home/gituser/repos/project] 
-[ issue/branch_name ] [ last: 8d726fd ] [ pending changes: 439 ] 
+userhostname@[/home/gituser/repos/project] [ master | 8808b1f ] [?:0] [+:0] [-:0] [X: 0]
 > _
 ```
