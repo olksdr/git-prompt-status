@@ -12,7 +12,26 @@ sub main() {
     exit(0);
   } else {
     my $branch = $+{branch} if $current_branch->[0] =~ /refs\/heads\/(?<branch>.+)/;
-    say colored ['bright_red on_white'], "[ $branch ]"; 
+    $branch //= "-"; # if in 'detached HEAD' state
+    my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
+    print colored ['bright_red on_white'], "[ $branch | $commit ]"; 
+    my $changes = exec_cmd("git status --porcelain");
+    my $untracked = 0; 
+    my $added = 0;
+    my $modified = 0;
+    my $conflicts = 0;
+    foreach my $line (@$changes) {
+      if ($line =~ m/^\?\?/) {
+        $untracked += 1;
+      } elsif ($line =~ m/^[AMD]/) {
+        $added += 1;
+      } elsif ($line =~ m/^\sM/) {
+        $modified += 1;
+      } elsif ($line =~ m/^U/) {
+        $conflicts += 1;
+      }
+    }
+    print " [?:$untracked] [+:$added] [-:$modified] [X: $conflicts] ";
   }
 }
 
