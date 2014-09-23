@@ -4,46 +4,64 @@ use strict;
 use warnings;
 use 5.010;
 
-# let's color our output
 use Term::ANSIColor;
 
-## SUBS ##
 sub main() {
-    git_exec("branch -v", \&branch_parse, "true");
-    git_exec("rev-list HEAD...origin/master --count", \&pending);
+  my $current_branch = exec_cmd("git symbolic-ref HEAD");
+  if($current_branch->[0] =~ m/fatal: Not a git repository/) {
+    exit(0);
+  } else {
+    my $branch = $+{branch} if $current_branch->[0] =~ /refs\/heads\/(?<branch>.+)/;
+    say colored ['bright_red on_white'], "[ $branch ]"; 
+  }
 }
 
-# parser and printer for branches 
-sub branch_parse() {
-    my $branch_name = shift;
-    if($branch_name =~ /^\* (?<branch>.+?) \s*(?<commit>.+?) .+/) {
-        print colored ['red'], "[ $+{branch} ]";
-        print " [ last: $+{commit} ] ";
-    }
+sub exec_cmd() {
+  my $command = shift;
+  open(FH, '-|', "$command 2>&1") || die "can't run the command $!";
+  my $result = ();
+  while (<FH>) {
+    chomp;
+    push @$result, $_;
+  }
+  close FH;
+  return $result;
 }
 
-# prints the general number of commits as difference between current branch and origin/master
-# TODO: show which branch is ahead (or they are diverged), additional status is needed
-sub pending() {
-    my $count = shift;
-    print colored ['black on_bright_red'], "[ pending changes: $count ]" if $count > 0;
-}
-
-# executes keys and passes result to given sub for further parsing/output
-sub git_exec() {
-    my $git_bin = "/usr/bin/git";
-    my ($cmd, $subref, $newline) = @_;
-    $newline //= "false";
-
-    say "" if $newline eq "true";
-    open FH, "-|", "$git_bin $cmd 2>/dev/null" or die "";
-    while(<FH>) {
-        chomp;
-        $subref->($_);
-    }
-    close FH;
-}
-
-## calling MAIN ##
 main();
 
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Git Prompt Status - Information about the current GIT repo
+
+=head1 DESCRIPTION
+
+This simple script intents to beautify GIT prompt status in BASH. This makes it easier 
+to manage repositories using some additional information. 
+
+=head2 METHODS
+
+=over 4
+
+
+=item N<exec_cmd>
+
+Executes a command passed to this function as a string. Returns all the STDOUT and STDERR 
+which was produced by the command as an array of strings.
+
+=back
+
+=head1 AUTHOR
+
+Oleksandr Kylymnychenko, oleksandr@nerdydev.net
+
+=head1 COPYRIGHT AND LICENSE
+
+GNU GPL, Version 2
+
+=cut
