@@ -16,24 +16,21 @@ sub main() {
     $branch //= "-"; # if in 'detached HEAD' state
     my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
     print colored ['bright_red on_white'], "[ $branch | $commit ]"; 
-
+    my $status = {};
     my $changes = exec_cmd("git status --porcelain");
-    my $untracked = 0; 
-    my $added = 0;
-    my $modified = 0;
-    my $conflicts = 0;
     foreach my $line (@$changes) {
-      if ($line =~ m/^\?\?/) {
-        $untracked += 1;
-      } elsif ($line =~ m/^[AMD]/) {
-        $added += 1;
-      } elsif ($line =~ m/^\sM/) {
-        $modified += 1;
-      } elsif ($line =~ m/^U/) {
-        $conflicts += 1;
-      }
+      $status->{$1} += 1 if $line =~ /^([ \w\?]+)? /;
     }
-    print " [?:$untracked] [+:$added] [-:$modified] [X: $conflicts] ";
+    # prints out beautiful results 
+    foreach my $k (keys %$status) {
+      print colored ['bright_black on_bright_cyan'], "[?:$status->{$k}]" if $k =~ /\?\?/; # untracked files
+      print colored ['bright_black on_bright_yellow'], "[M-:$status->{$k}]" if $k =~ /^ M/; # modified, unstaged
+      print colored ['bright_black on_bright_red'], "[X:$status->{$k}]" if $k =~ /U/; # conflicts
+      print colored ['bright_black on_bright_green'], "[N+:$status->{$k}]" if $k =~ /^A/; # added completely new files, staged
+      print colored ['black on_green'], "[M+:$status->{$k}]" if $k =~ /^M/; # modified files, staged
+      print colored ['black on_bright_blue'], "[D+:$status->{$k}]" if $k =~ /^D/; # deleted files, staged
+      print colored ['black on_blue'], "[D-:$status->{$k}]" if $k =~ /^ D/; # deleted files, unstaged 
+    }
   }
 }
 
