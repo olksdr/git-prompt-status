@@ -2,7 +2,8 @@
 
 use strict;
 use warnings;
-use 5.010;
+use 5.016;
+use utf8;
 
 use Term::ANSIColor;
 
@@ -15,6 +16,7 @@ sub main() {
     $branch //= "-"; # if in 'detached HEAD' state
     my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
     print colored ['bright_red on_white'], "[ $branch | $commit ]"; 
+
     my $changes = exec_cmd("git status --porcelain");
     my $untracked = 0; 
     my $added = 0;
@@ -68,7 +70,7 @@ to manage repositories using some additional information.
 =over 4
 
 
-=item N<exec_cmd>
+=item B<exec_cmd()>
 
 Executes a command passed to this function as a string. Returns all the STDOUT and STDERR 
 which was produced by the command as an array of strings.
