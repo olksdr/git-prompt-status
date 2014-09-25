@@ -16,7 +16,7 @@ PS1="\h@[\w]\n\$($GIT_PROMPT)\n> "
 #####Result in the repo:
 ``` bash
 userhostname@[/home/gituser/repos/project]
-[ test22 | 65bce87][M-:1][M+:1][D-:1][D+:1][?:1] 
+[ test22 | 65bce87 ][D-:1][M-:1][N+:1][D+:1][M+:1] 
 > _
 ```
 ![git prompt status](git-prompt-status.png)
