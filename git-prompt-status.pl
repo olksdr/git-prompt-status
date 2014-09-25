@@ -8,11 +8,11 @@ use utf8;
 use Term::ANSIColor;
 
 sub main() {
-  my $current_branch = exec_cmd("git symbolic-ref HEAD");
-  if($current_branch->[0] =~ m/fatal: Not a git repository/) {
+  my $current_branch = @{exec_cmd("git symbolic-ref HEAD")}[0];
+  if($current_branch =~ m/fatal: Not a git repository/) {
     exit(0);
   } else {
-    my $branch = $+{branch} if $current_branch->[0] =~ /refs\/heads\/(?<branch>.+)/;
+    my $branch = $1 if $current_branch =~ /refs\/heads\/(.+)/;
     $branch //= "-"; # if in 'detached HEAD' state
     my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
     print colored ['bright_red on_white'], "[ $branch | $commit ]"; 
@@ -23,11 +23,11 @@ sub main() {
     }
     # prints out beautiful results 
     foreach my $k (sort keys %$status) {
-      print colored ['bright_black on_bright_cyan'], "[?:$status->{$k}]" if $k =~ /\?\?/; # untracked files
-      print colored ['bright_black on_bright_yellow'], "[M-:$status->{$k}]" if $k =~ /^ M/; # modified, unstaged
       print colored ['bright_black on_bright_red'], "[X:$status->{$k}]" if $k =~ /U/; # conflicts
+      print colored ['bright_black on_bright_cyan'], "[?:$status->{$k}]" if $k =~ /\?\?/; # untracked files
       print colored ['bright_black on_bright_green'], "[N+:$status->{$k}]" if $k =~ /^A/; # added completely new files, staged
       print colored ['black on_green'], "[M+:$status->{$k}]" if $k =~ /^M/; # modified files, staged
+      print colored ['bright_black on_bright_yellow'], "[M-:$status->{$k}]" if $k =~ /^ M/; # modified, unstaged
       print colored ['black on_bright_blue'], "[D+:$status->{$k}]" if $k =~ /^D/; # deleted files, staged
       print colored ['black on_blue'], "[D-:$status->{$k}]" if $k =~ /^ D/; # deleted files, unstaged 
     }
