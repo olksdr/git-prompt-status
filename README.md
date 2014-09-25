@@ -19,4 +19,4 @@ userhostname@[/home/gituser/repos/project]
 [ test22 | 65bce87][M-:1][M+:1][D-:1][D+:1][?:1] 
 > _
 ```
-![GIT Prompt Status](master/git-prompt-status.png)
+![git prompt status](git-prompt-status.png)
