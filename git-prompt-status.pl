@@ -15,23 +15,33 @@ sub main() {
     my $branch = $1 if $current_branch =~ /refs\/heads\/(.+)/;
     $branch //= "-"; # if in 'detached HEAD' state
     my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
-    print colored ['bright_red on_white'], "[ $branch | $commit ]"; 
+    printout("[ $branch | $commit ]", "bold bright_red on_white");
+    
+    my $stash = exec_cmd("git stash list");
+    printout("[stash:" . scalar @$stash ."]", "bold black on_white", "true") if defined $stash;
+    
     my $status = {};
     my $changes = exec_cmd("git status --porcelain");
-    foreach my $line (@$changes) {
-      $status->{$1} += 1 if $line =~ /^([ \w\?]+)? /;
+    foreach my $change (@$changes) {
+      $status->{$1} += 1 if $change =~ /^([ \w\?]+)? /;
     }
-    # prints out beautiful results 
     foreach my $k (sort keys %$status) {
-      print colored ['bright_black on_bright_red'], "[X:$status->{$k}]" if $k =~ /U/; # conflicts
-      print colored ['bright_black on_bright_cyan'], "[?:$status->{$k}]" if $k =~ /\?\?/; # untracked files
-      print colored ['bright_black on_bright_green'], "[N+:$status->{$k}]" if $k =~ /^A/; # added completely new files, staged
-      print colored ['black on_green'], "[M+:$status->{$k}]" if $k =~ /^M/; # modified files, staged
-      print colored ['bright_black on_bright_yellow'], "[M-:$status->{$k}]" if $k =~ /^ M/; # modified, unstaged
-      print colored ['black on_bright_blue'], "[D+:$status->{$k}]" if $k =~ /^D/; # deleted files, staged
-      print colored ['black on_blue'], "[D-:$status->{$k}]" if $k =~ /^ D/; # deleted files, unstaged 
+      printout("[X:$status->{$k}]", "bold bright_black on_bright_red") if $k =~ /U/; # conflicts
+      printout("[?:$status->{$k}]", "bold bright_black on_bright_cyan") if $k =~ /\?\?/; # untracked files
+      printout("[N+:$status->{$k}]", "bold right_black on_bright_green") if $k =~ /^A/; # added completely new files, staged
+      printout("[M+:$status->{$k}]", "bold black on_green") if $k =~ /^M/; # modified files, staged
+      printout("[M-:$status->{$k}]", "bold bright_black on_bright_yellow") if $k =~ /^ M/; # modified, unstaged
+      printout("[D+:$status->{$k}]", "bold black on_bright_blue") if $k =~ /^D/; # deleted files, staged
+      printout("[D-:$status->{$k}]", "bold black on_blue") if $k =~ /^ D/; # deleted files, unstaged 
     }
   }
+}
+
+sub printout() {
+  my ($out, $color_spec, $space) = @_;
+  print " " if defined $space;
+  print colored ($out, $color_spec);
+  print color 'reset';
 }
 
 sub exec_cmd() {
@@ -71,6 +81,12 @@ to manage repositories using some additional information.
 
 Executes a command passed to this function as a string. Returns all the STDOUT and STDERR 
 which was produced by the command as an array of strings.
+
+=item B<printout()>
+
+Takes as arguments two strings - first one with a text to print and second one with color specification
+and prints our already formated string. As a third argument can take a true or false in case 
+if a space should be printed in front of new stat
 
 =back
 
