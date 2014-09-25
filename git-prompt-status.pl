@@ -22,7 +22,7 @@ sub main() {
       $status->{$1} += 1 if $line =~ /^([ \w\?]+)? /;
     }
     # prints out beautiful results 
-    foreach my $k (keys %$status) {
+    foreach my $k (sort keys %$status) {
       print colored ['bright_black on_bright_cyan'], "[?:$status->{$k}]" if $k =~ /\?\?/; # untracked files
       print colored ['bright_black on_bright_yellow'], "[M-:$status->{$k}]" if $k =~ /^ M/; # modified, unstaged
       print colored ['bright_black on_bright_red'], "[X:$status->{$k}]" if $k =~ /U/; # conflicts
