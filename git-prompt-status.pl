@@ -15,7 +15,7 @@ sub main() {
     my $branch = $1 if $current_branch =~ /refs\/heads\/(.+)/;
     $branch //= "-"; # if in 'detached HEAD' state
     my $commit = @{exec_cmd("git rev-parse --short HEAD")}[0]; # gives the current commit
-    printout("[ $branch | $commit ]", "bold bright_red on_white");
+    printout("[ $branch | $commit ]", "bold bright_red on_white", "true");
     
     my $stash = exec_cmd("git stash list");
     printout("[stash:" . scalar @$stash ."]", "bold black on_white", "true") if defined $stash;
@@ -39,9 +39,9 @@ sub main() {
 
 sub printout() {
   my ($out, $color_spec, $space) = @_;
-  print " " if defined $space;
   print colored ($out, $color_spec);
   print color 'reset';
+  print " " if defined $space;
 }
 
 sub exec_cmd() {
@@ -86,7 +86,7 @@ which was produced by the command as an array of strings.
 
 Takes as arguments two strings - first one with a text to print and second one with color specification
 and prints our already formated string. As a third argument can take a true or false in case 
-if a space should be printed in front of new stat
+if a space should be printed at the end of new stat.
 
 =back
 
