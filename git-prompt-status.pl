@@ -26,11 +26,11 @@ sub main() {
       $status->{$1} += 1 if $change =~ /^([ \w\?]+)? /;
     }
     foreach my $k (sort keys %$status) {
-      printout("[X:$status->{$k}]", "bold bright_black on_bright_red") if $k =~ /U/; # conflicts
-      printout("[?:$status->{$k}]", "bold bright_black on_bright_cyan") if $k =~ /\?\?/; # untracked files
-      printout("[N+:$status->{$k}]", "bold right_black on_bright_green") if $k =~ /^A/; # added completely new files, staged
-      printout("[M+:$status->{$k}]", "bold black on_green") if $k =~ /^M/; # modified files, staged
-      printout("[M-:$status->{$k}]", "bold bright_black on_bright_yellow") if $k =~ /^ M/; # modified, unstaged
+      printout("[X:$status->{$k}]", "bold black on_bright_red") if $k =~ /U/; # conflicts
+      printout("[?:$status->{$k}]", "bold black on_yellow") if $k =~ /\?\?/; # untracked files
+      printout("[N+:$status->{$k}]", "bold black on_bright_green") if $k =~ /^A/; # added completely new files, staged
+      printout("[M+:$status->{$k}]", "bold black on_bright_green") if $k =~ /^M/; # modified files, staged
+      printout("[M-:$status->{$k}]", "bold black on_green") if $k =~ /^ M/; # modified, unstaged
       printout("[D+:$status->{$k}]", "bold black on_bright_blue") if $k =~ /^D/; # deleted files, staged
       printout("[D-:$status->{$k}]", "bold black on_blue") if $k =~ /^ D/; # deleted files, unstaged 
     }
