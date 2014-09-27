@@ -33,6 +33,8 @@ sub main() {
       printout("[M-:$status->{$k}]", "bold black on_green") if $k =~ /^ M/; # modified, unstaged
       printout("[D+:$status->{$k}]", "bold black on_bright_blue") if $k =~ /^D/; # deleted files, staged
       printout("[D-:$status->{$k}]", "bold black on_blue") if $k =~ /^ D/; # deleted files, unstaged 
+      printout("[R+:$status->{$k}]", "bold black on_bright_green") if $k =~ /^R/; # renamed files, staged 
+      printout("[R-:$status->{$k}]", "bold black on_green") if $k =~ /^ R/; # renamed files, unstaged 
     }
   }
 }
